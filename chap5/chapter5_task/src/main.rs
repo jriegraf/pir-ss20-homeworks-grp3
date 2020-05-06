@@ -78,8 +78,13 @@ impl Monster {
         }
     }
     // // Make monster cloneable
-    fn clone() {
-        
+    fn clone(check:bool) -> Option<Monster>{
+        if check == true {
+            println!("new Monster spawned");
+            Some(Monster::spawn("clone".to_string(), 25, 25, (0,0)))
+        } else {
+            None
+        }
     }
 }
 #[derive(Debug)]
@@ -123,7 +128,7 @@ fn main() {
     println!("{:?}", gamefield);
     println!("gamefield[x][y]: {:?}", gamefield.grid[2][3]);
     // Spawn a hero
-    let mut hero = Hero::spawn("Arthur".to_string(), 100, 15, (4,3));
+    let mut hero = Hero::spawn("Arthur".to_string(), 100, 25, (4,3));
     println!("{:#?}", hero);
     gamefield = Gamefield::update(gamefield, (4,3), 1);
     // set monster to x,y on grid -> fn set in grid
@@ -137,9 +142,12 @@ fn main() {
     // Let them fight, and clone a monster
     let hp_mon = monster.hitpoints/2;
     monster = hero.attack(monster);
-    if monster.hitpoints <= hp_mon{
-        let clone_mon = Monster::spawn("clone".to_string(), 25, 10, (8,8));
+    let clone_mon = if monster.hitpoints <= hp_mon{
+        Monster::clone(true).unwrap()
+    } else {
+        Monster::clone(false).unwrap()
     }; 
+    gamefield = Gamefield::update(gamefield, (1, 1), 2);
     hero = monster.attack(hero);
     // Move hero and mosnter
     gamefield = hero.move_hero((3,3), gamefield);
